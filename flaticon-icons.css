@@ -1,0 +1,45 @@
+/* Flaticon Uicons 4.0.0, Rounded Regular. https://www.flaticon.com/uicons */
+@font-face {
+  font-family: 'Flaticon Rounded';
+  src: url('./assets/flaticon-rounded-regular.woff') format('woff');
+  font-display: block;
+}
+
+.ui-icon {
+  display: inline-block;
+  flex: none;
+  font: 16px/1 'Flaticon Rounded';
+}
+
+.tool-card .ui-icon { font-size: 18px; }
+.board-more-btn .ui-icon, .toggle-icon-btn .ui-icon { font-size: 14px; }
+#toolLine .ui-icon { transform: rotate(-45deg); }
+#btnTextAlignRight .ui-icon { transform: scaleX(-1); }
+
+.ui-icon-align-center::before { content: "\e078"; }
+.ui-icon-align-left::before { content: "\e07a"; }
+.ui-icon-circle::before { content: "\e463"; }
+.ui-icon-cross-small::before { content: "\e5eb"; }
+.ui-icon-curve-alt::before { content: "\e61d"; }
+.ui-icon-eraser::before { content: "\e796"; }
+.ui-icon-eye-dropper::before { content: "\e7c0"; }
+.ui-icon-fill::before { content: "\e86e"; }
+.ui-icon-hand-paper::before { content: "\ea10"; }
+.ui-icon-hexagon::before { content: "\ea6b"; }
+.ui-icon-menu-dots-vertical::before { content: "\eced"; }
+.ui-icon-minus::before { content: "\ed25"; }
+.ui-icon-minus-small::before { content: "\ed28"; }
+.ui-icon-paint-brush::before { content: "\ee52"; }
+.ui-icon-pencil::before { content: "\eea9"; }
+.ui-icon-plus-small::before { content: "\ef88"; }
+.ui-icon-rectangle-panoramic::before { content: "\f044"; }
+.ui-icon-redo::before { content: "\f04e"; }
+.ui-icon-sidebar::before { content: "\f1ac"; }
+.ui-icon-square::before { content: "\f28f"; }
+.ui-icon-square-dashed::before { content: "\f2a2"; }
+.ui-icon-table::before { content: "\f364"; }
+.ui-icon-text::before { content: "\f3b6"; }
+.ui-icon-trash::before { content: "\f463"; }
+.ui-icon-triangle::before { content: "\f484"; }
+.ui-icon-undo::before { content: "\f4d9"; }
+.ui-icon-zoom-in::before { content: "\f65a"; }

@@ -1,0 +1,22 @@
+{
+  "name": "paintboard",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port=3000 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "node --check script.js && node --check paint-document.js && node --check paint-tools.js && node --check paint-bitmaps.js && node --check classic-formats.js && node --check vite.config.js"
+  },
+  "dependencies": {
+    "gifenc": "1.0.3",
+    "utif": "3.1.0"
+  },
+  "devDependencies": {
+    "vite": "^6.4.4"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

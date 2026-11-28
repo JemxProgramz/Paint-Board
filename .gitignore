@@ -1,0 +1,30 @@
+# Dependencies and build output
+node_modules/
+.npm-cache/
+build/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Local tooling and test artifacts
+/.agents/
+/agent-harness/
+/.github/workflows/paintboard.yml
+/.codex/
+/.aws/
+/.paint-tools/
+.venv/
+__pycache__/
+.pytest_cache/
+*.egg-info/
+playwright-report/
+test-results/
+*.log
+
+# Local settings and credentials
+.env*
+!.env.example
+*.key
+*.pem
+.DS_Store
+Thumbs.db
