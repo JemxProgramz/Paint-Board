@@ -1,0 +1,858 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>PaintBoard</title>
+    <meta name="description" content="A browser drawing app with multiple boards, shape tools, flood fill, transparency, and local autosave.">
+    <meta property="og:title" content="PaintBoard">
+    <meta property="og:description" content="A browser drawing app with multiple boards, shape tools, flood fill, transparency, and local autosave.">
+    <script type="module" crossorigin src="./assets/index-DKAWeVsM.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BxhHDJtV.css">
+  </head>
+  <body>
+    <div id="app" class="paintboard-app">
+      <!-- Top Window Title & Menu Bar -->
+      <header class="app-header" id="appHeader">
+        <div class="window-titlebar">
+          <div class="app-brand">
+            <span class="app-icon" aria-hidden="true"></span>
+            <h1 class="app-title">PaintBoard</h1>
+            <span class="app-divider" aria-hidden="true"></span>
+            <button class="active-board-label" id="headerBoardName" type="button" title="Rename board">Whiteboard 1</button>
+          </div>
+
+          <div class="header-center-tools">
+            <button class="icon-btn" id="btnUndoQuick" title="Undo (Ctrl+Z)" aria-label="Undo"><span class="ui-icon ui-icon-undo" aria-hidden="true"></span></button>
+            <button class="icon-btn" id="btnRedoQuick" title="Redo (Ctrl+Y)" aria-label="Redo"><span class="ui-icon ui-icon-redo" aria-hidden="true"></span></button>
+            <div class="header-vdiv"></div>
+            <button class="icon-btn" id="btnClearQuick" title="Clear Canvas" aria-label="Clear Canvas"><span class="ui-icon ui-icon-trash" aria-hidden="true"></span></button>
+          </div>
+
+          <div class="header-right-actions">
+            <div class="save-status" id="saveStatusIndicator" title="Saved in this browser">
+              <span class="status-dot"></span>
+              <span class="status-text" id="saveStatusText">Saved</span>
+            </div>
+            <button class="toggle-sidebar-btn" id="btnToggleSidebar" aria-controls="sidebarPanel" aria-expanded="true">
+              <span class="ui-icon ui-icon-sidebar" aria-hidden="true"></span>
+              <span class="btn-text">Boards &amp; tools</span>
+            </button>
+          </div>
+        </div>
+        <div class="modern-ribbon">
+          <div class="ribbon-group menu-group">
+            <!-- File Menu -->
+            <div class="menu-item" data-menu="file">
+              <button class="menu-btn" id="menuBtnFile">File</button>
+              <div class="dropdown-panel" id="menuDropdownFile">
+                <button class="dropdown-item" id="menuItemNewBoard">
+                  <span class="item-label">New Board</span>
+                  <span class="shortcut">Ctrl+N</span>
+                </button>
+                <button class="dropdown-item" id="menuItemOpenImage">
+                  <span class="item-label">Open Image…</span>
+                  <span class="shortcut">Ctrl+O</span>
+                </button>
+                <button class="dropdown-item" id="menuItemInsertImage">
+                  <span class="item-label">Insert Image…</span>
+                </button>
+                <button class="dropdown-item" id="menuItemInsertTable">Insert table…</button>
+                <div class="dropdown-separator"></div>
+                <button class="dropdown-item" id="menuItemSaveAs">
+                  <span class="item-label">Save As…</span>
+                  <span class="shortcut">Ctrl+Shift+S</span>
+                </button>
+                <button class="dropdown-item" id="menuItemSaveProject">
+                  <span class="item-label">Save project</span>
+                  <span class="shortcut">Ctrl+S</span>
+                </button>
+                <button class="dropdown-item" id="menuItemImportProject">
+                  <span class="item-label">Import Project (JSON)...</span>
+                </button>
+                <div class="dropdown-separator"></div>
+                <button class="dropdown-item" id="menuItemExportPNG">
+                  <span class="item-label">Export as PNG</span>
+                </button>
+                <button class="dropdown-item" id="menuItemExportJPG">
+                  <span class="item-label">Export as JPG</span>
+                </button>
+                <button class="dropdown-item" id="menuItemPrint">
+                  <span class="item-label">Print…</span>
+                  <span class="shortcut">Ctrl+P</span>
+                </button>
+                <div class="dropdown-separator"></div>
+                <button class="dropdown-item" id="menuItemResetAll">
+                  <span class="item-label">Reset Workspace</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Edit Menu -->
+            <div class="menu-item" data-menu="edit">
+              <button class="menu-btn" id="menuBtnEdit">Edit</button>
+              <div class="dropdown-panel" id="menuDropdownEdit">
+                <button class="dropdown-item" id="menuItemUndo">
+                  <span class="item-label">Undo</span>
+                  <span class="shortcut">Ctrl+Z</span>
+                </button>
+                <button class="dropdown-item" id="menuItemRedo">
+                  <span class="item-label">Redo</span>
+                  <span class="shortcut">Ctrl+Y</span>
+                </button>
+                <div class="dropdown-separator"></div>
+                <button class="dropdown-item" id="menuItemCut">
+                  <span class="item-label">Cut Selection</span>
+                  <span class="shortcut">Ctrl+X</span>
+                </button>
+                <button class="dropdown-item" id="menuItemCopy">
+                  <span class="item-label">Copy Selection</span>
+                  <span class="shortcut">Ctrl+C</span>
+                </button>
+                <button class="dropdown-item" id="menuItemPaste">
+                  <span class="item-label">Paste Selection</span>
+                  <span class="shortcut">Ctrl+V</span>
+                </button>
+                <button class="dropdown-item" id="menuItemSelectAll">
+                  <span class="item-label">Select All</span>
+                  <span class="shortcut">Ctrl+A</span>
+                </button>
+                <button class="dropdown-item" id="menuItemInvertSelection">
+                  <span class="item-label">Invert Selection</span>
+                  <span class="shortcut">Ctrl+Shift+I</span>
+                </button>
+                <button class="dropdown-item" id="menuItemDeleteSelection">
+                  <span class="item-label">Delete Selection</span>
+                  <span class="shortcut">Del</span>
+                </button>
+                <div class="dropdown-separator"></div>
+                <button class="dropdown-item" id="menuItemClearBoard">
+                  <span class="item-label text-danger">Clear Board</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- View Menu -->
+            <div class="menu-item" data-menu="view">
+              <button class="menu-btn" id="menuBtnView">View</button>
+              <div class="dropdown-panel" id="menuDropdownView">
+                <button class="dropdown-item" id="menuItemZoomIn">
+                  <span class="item-label">Zoom In</span>
+                  <span class="shortcut">Ctrl +</span>
+                </button>
+                <button class="dropdown-item" id="menuItemZoomOut">
+                  <span class="item-label">Zoom Out</span>
+                  <span class="shortcut">Ctrl -</span>
+                </button>
+                <button class="dropdown-item" id="menuItemResetZoom">
+                  <span class="item-label">Actual Size (100%)</span>
+                  <span class="shortcut">Ctrl 0</span>
+                </button>
+                <button class="dropdown-item" id="menuItemFitCanvas">
+                  <span class="item-label">Fit to Window</span>
+                </button>
+                <div class="dropdown-separator"></div>
+                <button class="dropdown-item" id="menuItemToggleGrid" data-guide="grid" aria-pressed="false">Grid</button>
+                <button class="dropdown-item" data-guide="ruled" aria-pressed="false">Ruled lines</button>
+                <button class="dropdown-item" id="toggleRulers" aria-pressed="false">Rulers</button>
+                <button class="dropdown-item" id="viewFullScreen">Full Screen</button>
+                <div class="dropdown-submenu-item">
+                  <span class="item-label">Grid Spacing:</span>
+                  <div class="grid-spacing-options">
+                    <button class="spacing-btn" data-spacing="1">1px</button>
+                    <button class="spacing-btn" data-spacing="10">10px</button>
+                    <button class="spacing-btn active" data-spacing="20">
+                      20px
+                    </button>
+                    <button class="spacing-btn" data-spacing="50">50px</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Image Menu -->
+            <div class="menu-item" data-menu="image">
+              <button class="menu-btn" id="menuBtnImage">Image</button>
+              <div class="dropdown-panel" id="menuDropdownImage">
+                <button class="dropdown-item" id="menuItemCrop"><span class="item-label">Crop to Selection</span></button>
+                <button class="dropdown-item" id="menuItemInvert"><span class="item-label">Invert Colors</span></button>
+                <button class="dropdown-item" id="menuItemResizeCanvas">
+                  <span class="item-label">Resize Canvas...</span>
+                </button>
+                <div class="dropdown-separator"></div>
+                <button class="dropdown-item" id="menuItemRotateCW">
+                  <span class="item-label">Rotate 90° Clockwise</span>
+                </button>
+                <button class="dropdown-item" id="menuItemRotateCCW">
+                  <span class="item-label">Rotate 90° Counter-Clockwise</span>
+                </button>
+                <button class="dropdown-item" id="menuItemRotate180">
+                  <span class="item-label">Rotate 180°</span>
+                </button>
+                <div class="dropdown-separator"></div>
+                <button class="dropdown-item" id="menuItemFlipH">
+                  <span class="item-label">Flip Horizontal</span>
+                </button>
+                <button class="dropdown-item" id="menuItemFlipV">
+                  <span class="item-label">Flip Vertical</span>
+                </button>
+                <div class="dropdown-separator"></div>
+                <button class="dropdown-item" id="menuItemChangeBackground">
+                  <span class="item-label">Canvas Background...</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Tools Menu -->
+            <div class="menu-item" data-menu="tools">
+              <button class="menu-btn" id="menuBtnTools">Tools</button>
+              <div class="dropdown-panel" id="menuDropdownTools">
+                <button class="dropdown-item tool-select" data-tool="laser">
+                  <span class="item-label">Laser pointer</span><span class="shortcut">V</span>
+                </button>
+                <button class="dropdown-item tool-select" data-tool="pencil">
+                  <span class="item-label">Pencil</span><span class="shortcut">P</span>
+                </button>
+                <button class="dropdown-item tool-select" data-tool="brush">
+                  <span class="item-label">Brush</span><span class="shortcut">B</span>
+                </button>
+                <button class="dropdown-item tool-select" data-tool="eraser">
+                  <span class="item-label">Eraser</span><span class="shortcut">E</span>
+                </button>
+                <button class="dropdown-item tool-select" data-tool="line">
+                  <span class="item-label">Line</span><span class="shortcut">L</span>
+                </button>
+                <button class="dropdown-item tool-select" data-tool="curve">Curve</button>
+                <button class="dropdown-item tool-select" data-tool="rectangle">
+                  <span class="item-label">Rectangle</span><span class="shortcut">R</span>
+                </button>
+                <button class="dropdown-item tool-select" data-tool="circle">
+                  <span class="item-label">Ellipse</span><span class="shortcut">C</span>
+                </button>
+                <button class="dropdown-item tool-select" data-tool="triangle">
+                  <span class="item-label">Triangle</span>
+                </button>
+                <button class="dropdown-item tool-select" data-tool="polygon">
+                  <span class="item-label">Polygon</span>
+                </button>
+                <button class="dropdown-item tool-select" data-tool="text">
+                  <span class="item-label">Text</span><span class="shortcut">T</span>
+                </button>
+                <button class="dropdown-item tool-select" data-tool="fill">
+                  <span class="item-label">Fill bucket</span><span class="shortcut">G</span>
+                </button>
+                <button class="dropdown-item tool-select" data-tool="picker">
+                  <span class="item-label">Eyedropper</span><span class="shortcut">I</span>
+                </button>
+                <button class="dropdown-item tool-select" data-tool="magnifier">
+                  <span class="item-label">Magnifier</span><span class="shortcut">Z</span>
+                </button>
+                <button class="dropdown-item tool-select" data-tool="select">
+                  <span class="item-label">Select</span><span class="shortcut">S</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Help Menu -->
+            <div class="menu-item" data-menu="help">
+              <button class="menu-btn" id="menuBtnHelp">Help</button>
+              <div class="dropdown-panel" id="menuDropdownHelp">
+                <button class="dropdown-item" id="menuItemShortcuts">
+                  <span class="item-label">Keyboard Shortcuts</span>
+                  <span class="shortcut">F1 / ?</span>
+                </button>
+                <button class="dropdown-item" id="menuItemAbout">
+                  <span class="item-label">About PaintBoard</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="ribbon-divider"></div>
+          <div class="ribbon-group tools-group" id="toolsGrid" role="toolbar" aria-label="Drawing Tools">
+            <!-- Freehand & Brushes -->
+            <button class="tool-card active" data-tool="pencil" id="toolPencil" title="Pencil (P): Freehand crisp sketch" aria-label="Pencil"><span class="ui-icon ui-icon-pencil" aria-hidden="true"></span></button>
+
+            <button class="tool-card" data-tool="brush" id="toolBrush" title="Brush (B): Smooth strokes &amp; styles" aria-label="Brush"><span class="ui-icon ui-icon-paint-brush" aria-hidden="true"></span></button>
+
+            <button class="tool-card" data-tool="eraser" id="toolEraser" title="Eraser (E): Clean drawing pixels" aria-label="Eraser"><span class="ui-icon ui-icon-eraser" aria-hidden="true"></span></button>
+
+            <!-- Vector Shapes -->
+            <button class="tool-card" data-tool="line" id="toolLine" title="Line (L): Straight line (Shift for angle snap)" aria-label="Line"><span class="ui-icon ui-icon-minus" aria-hidden="true"></span></button>
+
+            <button class="tool-card" data-tool="rectangle" id="toolRectangle" title="Rectangle (R): Box / Square" aria-label="Rectangle"><span class="ui-icon ui-icon-square" aria-hidden="true"></span></button>
+
+            <button class="tool-card" data-tool="roundedRect" id="toolRoundedRect" title="Rounded Rectangle" aria-label="Rounded Rectangle"><span class="ui-icon ui-icon-rectangle-panoramic" aria-hidden="true"></span></button>
+
+            <button class="tool-card" data-tool="circle" id="toolCircle" title="Circle / Ellipse (C): (Shift for perfect circle)" aria-label="Circle"><span class="ui-icon ui-icon-circle" aria-hidden="true"></span></button>
+
+            <button class="tool-card" data-tool="triangle" id="toolTriangle" title="Triangle" aria-label="Triangle"><span class="ui-icon ui-icon-triangle" aria-hidden="true"></span></button>
+
+            <button class="tool-card" data-tool="polygon" id="toolPolygon" title="Polygon: Click points, Double-click to close" aria-label="Polygon"><span class="ui-icon ui-icon-hexagon" aria-hidden="true"></span></button>
+
+            <button class="tool-card" data-tool="curve" id="toolCurve" title="Curve — drag a line, then place two bends" aria-label="Curve"><span class="ui-icon ui-icon-curve-alt" aria-hidden="true"></span></button>
+            <select id="shapeGallery" class="app-select paint-shape-picker" aria-label="Shapes" title="Choose a shape">
+              <option value="" disabled selected>Shapes</option>
+            </select>
+            <button type="button" class="tool-card" data-tool="table" id="toolTable" title="Insert table" aria-label="Insert table" aria-haspopup="dialog" aria-controls="insertTableModal"><span class="ui-icon ui-icon-table" aria-hidden="true"></span></button>
+
+            <!-- Text & Fill & Tools -->
+            <button class="tool-card" data-tool="text" id="toolText" title="Text (T): Click canvas to add text" aria-label="Text"><span class="ui-icon ui-icon-text" aria-hidden="true"></span></button>
+
+            <button class="tool-card" data-tool="fill" id="toolFill" title="Fill Bucket (G): Flood fill area" aria-label="Fill Bucket"><span class="ui-icon ui-icon-fill" aria-hidden="true"></span></button>
+
+            <button class="tool-card" data-tool="picker" id="toolPicker" title="Color Picker / Eyedropper (I)" aria-label="Color Picker"><span class="ui-icon ui-icon-eye-dropper" aria-hidden="true"></span></button>
+
+            <button class="tool-card" data-tool="select" id="toolSelect" title="Select (S): Select, move, copy, cut area" aria-label="Select Marquee"><span class="ui-icon ui-icon-square-dashed" aria-hidden="true"></span></button>
+
+            <button class="tool-card" data-tool="magnifier" id="toolMagnifier" title="Magnifier (Z) — click to zoom in, right-click to zoom out" aria-label="Magnifier"><span class="ui-icon ui-icon-zoom-in" aria-hidden="true"></span></button>
+            <button class="tool-card" data-tool="pan" id="toolPan" title="Pan Canvas (Space + Drag)" aria-label="Pan Canvas"><span class="ui-icon ui-icon-hand-paper" aria-hidden="true"></span></button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Workspace Layout -->
+      <div class="workspace-body">
+        <!-- Left Sidebar (Board Manager & Drawing Tools) -->
+        <div id="mobileBackdrop" class="mobile-backdrop"></div>
+        <aside class="sidebar-panel" id="sidebarPanel" aria-label="Boards and tool properties">
+          <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close Sidebar"><span class="ui-icon ui-icon-cross-small" aria-hidden="true"></span></button>
+          <!-- Section 1: Board Manager -->
+          <div class="sidebar-section board-manager-section">
+            <div class="section-header">
+              <h2 class="section-title">Boards</h2>
+              <button class="btn-new-board" id="btnNewBoard" title="Create a board" aria-label="Create New Board">
+                <span class="ui-icon ui-icon-plus-small" aria-hidden="true"></span>
+                <span>New</span>
+              </button>
+            </div>
+
+            <div class="boards-list-container" id="boardsListContainer" role="list">
+              <!-- Dynamic board cards generated via script.js -->
+            </div>
+          </div>
+
+          <div class="sidebar-section properties-section" id="propertiesBar" aria-labelledby="toolSettingsTitle">
+            <div class="section-header"><h2 class="section-title" id="toolSettingsTitle">Tool settings</h2></div>
+            <div class="properties-content"><div class="prop-group stroke-size-group">
+              <label class="prop-label" for="brushSizeSlider">Size</label>
+              <div class="size-presets">
+                <button class="size-preset-btn" data-size="1" title="1px">
+                  <span class="dot size-1"></span>
+                </button>
+                <button class="size-preset-btn" data-size="3" title="3px">
+                  <span class="dot size-3"></span>
+                </button>
+                <button class="size-preset-btn active" data-size="6" title="6px">
+                  <span class="dot size-6"></span>
+                </button>
+                <button class="size-preset-btn" data-size="12" title="12px">
+                  <span class="dot size-12"></span>
+                </button>
+                <button class="size-preset-btn" data-size="24" title="24px">
+                  <span class="dot size-24"></span>
+                </button>
+                <button class="size-preset-btn" data-size="48" title="48px">
+                  <span class="dot size-48"></span>
+                </button>
+              </div>
+              <div class="size-slider-wrap">
+                <input type="range" id="brushSizeSlider" min="1" max="100" value="6" class="app-range" aria-label="Brush Size Slider">
+                <span class="val-display" id="brushSizeVal">6px</span>
+              </div>
+            </div><div class="prop-group opacity-group">
+              <label class="prop-label" for="brushOpacitySlider">Opacity</label>
+              <div class="size-slider-wrap">
+                <input type="range" id="brushOpacitySlider" min="1" max="100" value="100" class="app-range" aria-label="Opacity Slider">
+                <span class="val-display" id="brushOpacityVal">100%</span>
+              </div>
+            </div><div class="prop-group shape-mode-group" id="shapeOptionsGroup" style="display: none">
+              <p id="shapeToolHelp" hidden></p>
+              <label class="prop-label" for="shapeOutlineStyle">Outline · Color 1</label>
+              <select id="shapeOutlineStyle" class="app-select"></select>
+              <div id="closedShapeOptions">
+                <label class="prop-label" for="shapeFillModeSelect">Shape mode</label>
+                <select id="shapeFillModeSelect" class="app-select" aria-label="Shape Fill Mode">
+                  <option value="stroke">Outline only</option>
+                  <option value="fill">Fill only</option>
+                  <option value="both">Outline &amp; fill</option>
+                </select>
+                <label class="prop-label" for="shapeFillStyle">Fill · Color 2</label>
+                <select id="shapeFillStyle" class="app-select"></select>
+              </div>
+            </div><div class="prop-group brush-tip-group" id="brushTipGroup" style="display: none">
+              <label class="prop-label" for="brushTipSelect">Brush</label>
+              <select id="brushTipSelect" class="app-select" aria-label="Brush Tip"></select>
+            </div><div class="prop-group" id="selectionOptionsGroup" style="display: none">
+              <label class="prop-label" for="selectionMode">Selection</label>
+              <select id="selectionMode" class="app-select">
+                <option value="rectangle">Rectangular selection</option>
+                <option value="free-form">Free-form selection</option>
+              </select>
+              <label class="selection-transparency" title="Treat Color 2 as transparent in the selection">
+                <input type="checkbox" id="transparentSelection"> Transparent selection
+              </label>
+            </div><div class="prop-group text-options-group" id="textOptionsGroup" style="display: none">
+              <label class="checkbox-label"><input type="checkbox" id="textOpaque"> Opaque text background</label>
+              <span class="prop-label">Font:</span>
+              <select id="textFontFamily" class="app-select" aria-label="Font Family">
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="'Segoe UI', Tahoma, sans-serif">Segoe UI</option>
+                <option value="'Courier New', monospace">Courier</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Comic Sans MS', cursive">Comic</option>
+                <option value="Impact, fantasy">Impact</option>
+              </select>
+              <select id="textFontSize" class="app-select" aria-label="Font Size">
+                <option value="14">14px</option>
+                <option value="18">18px</option>
+                <option value="24" selected="">24px</option>
+                <option value="32">32px</option>
+                <option value="48">48px</option>
+                <option value="64">64px</option>
+              </select>
+              <div class="text-format-buttons">
+                <button class="toggle-icon-btn" id="btnTextBold" title="Bold (Ctrl+B)">
+                  <b>B</b>
+                </button>
+                <button class="toggle-icon-btn" id="btnTextItalic" title="Italic (Ctrl+I)">
+                  <i>I</i>
+                </button>
+                <button class="toggle-icon-btn" id="btnTextUnderline" title="Underline (Ctrl+U)">
+                  <u>U</u>
+                </button>
+              </div>
+              <div class="text-align-buttons text-format-buttons" style="margin-top: 4px;">
+                <button class="toggle-icon-btn active" id="btnTextAlignLeft" title="Align Left"><span class="ui-icon ui-icon-align-left" aria-hidden="true"></span></button>
+                <button class="toggle-icon-btn" id="btnTextAlignCenter" title="Align Center"><span class="ui-icon ui-icon-align-center" aria-hidden="true"></span></button>
+                <button class="toggle-icon-btn" id="btnTextAlignRight" title="Align Right"><span class="ui-icon ui-icon-align-left" aria-hidden="true"></span></button>
+              </div>
+            </div><div class="prop-group color-management-group">
+              <div class="color-heading">
+                <span class="prop-label">Colors</span>
+                <button class="btn-swap-colors" id="btnSwapColors" title="Swap colors (X)" aria-label="Swap colors">Swap</button>
+              </div>
+              <div class="hex-colors">
+                <div class="color-field">
+                  <label for="primaryHex">Color 1</label>
+                  <input type="color" id="primaryColorPicker" value="#000000" aria-label="Color 1 picker">
+                  <input id="primaryHex" aria-label="Color 1 hex" value="#000000" maxlength="7" spellcheck="false">
+                </div>
+                <div class="color-field">
+                  <label for="secondaryHex">Color 2</label>
+                  <input type="color" id="secondaryColorPicker" value="#ffffff" aria-label="Color 2 picker">
+                  <input id="secondaryHex" aria-label="Color 2 hex" value="#ffffff" maxlength="7" spellcheck="false">
+                </div>
+              </div>
+              <div class="palette-swatches" id="paletteSwatches" role="region" aria-label="Color Palette">
+                <!-- Swatches generated in script.js (20 classic colors) -->
+              </div>
+            </div><div class="prop-group canvas-bg-group">
+              <span class="prop-label">Background</span>
+              <div class="bg-selector-wrap">
+                <button class="bg-preset-btn active" data-bg="#ffffff" title="White Background" style="background: #ffffff"></button>
+                <button class="bg-preset-btn" data-bg="#f8fafc" title="Off-White Background" style="background: #f8fafc"></button>
+                <button class="bg-preset-btn" data-bg="#fef3c7" title="Warm Yellow Sticky Note" style="background: #fef3c7"></button>
+                <button class="bg-preset-btn" data-bg="#1e293b" title="Dark Slate Blackboard" style="background: #1e293b"></button>
+                <button class="bg-preset-btn" data-bg="transparent" title="Transparent Grid Pattern" style="
+                    background: repeating-conic-gradient(
+                        #ddd 0% 25%,
+                        #fff 0% 50%
+                      )
+                      50% / 10px 10px;
+                  "></button>
+                <input type="color" id="customBgColorPicker" value="#ffffff" class="custom-bg-input" title="Custom Background Color" aria-label="Custom Background Color">
+              </div>
+            </div></div></div></aside>
+
+        <!-- Center & Right Drawing Studio Area -->
+        <main class="drawing-studio">
+          <!-- Secondary Properties Toolbar (Contextual Settings & Colors) -->
+
+          <!-- Canvas Viewport Scroll Area -->
+          <canvas id="horizontalRuler" class="paint-ruler" hidden aria-hidden="true"></canvas>
+          <canvas id="verticalRuler" class="paint-ruler" hidden aria-hidden="true"></canvas>
+          <div class="canvas-viewport" id="canvasViewport" tabindex="0" role="region" aria-label="Whiteboard Canvas Viewport">
+            <div class="canvas-transform-container" id="canvasTransformContainer">
+              <div class="canvas-artboard" id="canvasArtboard">
+                <!-- On-screen guides and teaching pointer -->
+                <div class="grid-layer" id="gridLayer"></div>
+                <div id="laserPointer" class="laser-pointer" hidden aria-hidden="true"></div>
+
+                <!-- Main Permanent Drawing Layer -->
+                <div id="paintLayers"><canvas id="mainCanvas" width="1600" height="900"></canvas></div>
+
+                <!-- Interactive Live Preview Layer (Shapes, active lines, cursor guides) -->
+                <canvas id="overlayCanvas" width="1600" height="900"></canvas>
+                <input id="tableCellEditor" type="text" maxlength="200" hidden>
+
+                <!-- Floating Text Nodes Container -->
+                <div id="floatingTextContainer"></div>
+
+                <!-- Floating Selection Box -->
+                <div id="selectionMarqueeBox" class="selection-marquee-box" style="display: none">
+                  <canvas id="selectionMaskOutline" class="selection-mask-outline" width="1" height="1" hidden></canvas>
+                  <div class="selection-handle handle-nw" data-handle="nw"></div>
+                  <div class="selection-handle handle-n" data-handle="n"></div>
+                  <div class="selection-handle handle-ne" data-handle="ne"></div>
+                  <div class="selection-handle handle-e" data-handle="e"></div>
+                  <div class="selection-handle handle-se" data-handle="se"></div>
+                  <div class="selection-handle handle-s" data-handle="s"></div>
+                  <div class="selection-handle handle-sw" data-handle="sw"></div>
+                  <div class="selection-handle handle-w" data-handle="w"></div>
+                </div>
+
+                <!-- Floating Image Placement Layer -->
+                <div id="floatingImageLayer" class="floating-image-layer" style="display: none">
+                  <img id="floatingImagePreview" alt="Imported preview">
+                  <div class="selection-handle handle-nw" data-handle="img-nw"></div>
+                  <div class="selection-handle handle-ne" data-handle="img-ne"></div>
+                  <div class="selection-handle handle-se" data-handle="img-se"></div>
+                  <div class="selection-handle handle-sw" data-handle="img-sw"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="canvas-actions">
+            <div class="selection-toolbar" id="selectionToolbar" role="group" aria-label="Selection actions" hidden>
+              <button class="btn btn-secondary" id="btnCopySel" title="Copy (Ctrl+C)">Copy</button>
+              <button class="btn btn-secondary" id="btnCutSel" title="Cut (Ctrl+X)">Cut</button>
+              <button class="btn btn-secondary" id="btnDelSel" title="Delete (Del)">Delete</button>
+              <button class="btn btn-primary" id="btnDeselect" title="Apply selection">Apply</button>
+            </div>
+            <div class="image-action-bar" id="imageActions" role="group" aria-label="Image placement actions" hidden>
+              <button class="btn btn-secondary" id="btnCancelImage">Cancel</button>
+              <button class="btn btn-primary" id="btnApplyImage">Place Image</button>
+            </div>
+          </div>
+
+          <!-- Bottom Application Status Bar -->
+          <footer class="app-status-bar" id="appStatusBar">
+            <div class="status-col status-tool">
+              <span class="status-label">Tool:</span>
+              <span class="status-val font-semibold" id="statusActiveTool">Pencil</span>
+            </div>
+
+            <div class="status-col status-detail">
+              <span class="status-label">Cursor:</span>
+              <span class="status-val" id="statusCoordinates">X: 0, Y: 0</span>
+            </div>
+
+            <div class="status-col status-canvas-size">
+              <span class="status-label">Canvas:</span>
+              <span class="status-val" id="statusCanvasDimensions">1600 × 900 px</span>
+            </div>
+
+            <div class="status-col" id="statusSelectionWrap" style="display: none">
+              <span class="status-label">Selection:</span>
+              <span class="status-val" id="statusSelectionDimensions">0 × 0 px</span>
+            </div>
+
+            <!-- Zoom Interactive Controls -->
+            <div class="status-col zoom-controls-col">
+              <button class="zoom-btn" id="btnZoomOut" title="Zoom Out (Ctrl -)" aria-label="Zoom Out"><span class="ui-icon ui-icon-minus-small" aria-hidden="true"></span></button>
+              <button type="button" class="zoom-level-text" id="statusZoomLevel" aria-label="Reset zoom to 100%" title="Reset zoom to 100%">100%</button>
+              <button class="zoom-btn" id="btnZoomIn" title="Zoom In (Ctrl +)" aria-label="Zoom In"><span class="ui-icon ui-icon-plus-small" aria-hidden="true"></span></button>
+              <button class="zoom-btn btn-fit" id="btnFitWindowQuick" title="Fit to Screen">
+                Fit
+              </button>
+            </div>
+
+          </footer>
+        </main>
+      </div>
+
+      <!-- Hidden File Inputs -->
+      <input type="file" id="fileInputImage" accept="image/*,.bmp" class="hidden-file-input">
+      <input type="file" id="fileInputInsertImage" accept="image/*,.bmp" class="hidden-file-input">
+      <input type="file" id="fileInputProject" accept=".json,application/json" class="hidden-file-input">
+
+      <!-- Toast Notification Container -->
+      <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+      <!-- ================= MODALS & DIALOGS ================= -->
+      <dialog id="saveAsModal" class="app-dialog" aria-labelledby="saveAsTitle">
+        <form class="modal-window" id="saveAsForm">
+          <div class="modal-header">
+            <h3 class="modal-title" id="saveAsTitle">Save As</h3>
+            <button type="button" class="modal-close-btn" id="btnSaveAsClose" aria-label="Close"><span class="ui-icon ui-icon-cross-small" aria-hidden="true"></span></button>
+          </div>
+          <div class="modal-content">
+            <label class="modal-label" for="saveImageName">File name</label>
+            <input class="modal-input" id="saveImageName" required maxlength="180" autocomplete="off" autofocus>
+            <label class="modal-label" for="saveImageFormat">File format</label>
+            <select class="modal-input" id="saveImageFormat">
+              <option value="png">PNG image (.png)</option>
+              <option value="bmp">24-bit bitmap (.bmp)</option>
+              <option value="jpg">JPEG image (.jpg)</option>
+              <option value="gif">GIF image (.gif)</option>
+              <option value="tiff">TIFF image (.tiff)</option>
+              <option value="webp">WebP image (.webp)</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" id="btnSaveAsCancel">Cancel</button>
+            <button class="btn btn-primary" type="submit" id="btnSaveImage">Save</button>
+          </div>
+        </form>
+      </dialog>
+      <!-- Generic Confirmation Modal -->
+      <dialog id="confirmModal" class="app-dialog" aria-labelledby="confirmModalTitle" aria-describedby="confirmModalMessage confirmModalSubtext">
+        <div class="modal-window confirm-modal-window">
+          <div class="modal-header">
+            <h3 class="modal-title" id="confirmModalTitle">Confirmation</h3>
+            <button class="modal-close-btn" id="btnConfirmClose" aria-label="Close modal"><span class="ui-icon ui-icon-cross-small" aria-hidden="true"></span></button>
+          </div>
+          <div class="modal-content">
+            <p id="confirmModalMessage">
+              Are you sure you want to proceed with this action?
+            </p>
+            <p id="confirmModalSubtext" class="modal-subtext text-muted"></p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" id="btnConfirmCancel" autofocus>
+              Cancel
+            </button>
+            <button class="btn btn-danger" id="btnConfirmAction">
+              Proceed
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <!-- Rename Board Modal -->
+      <dialog id="renameModal" class="app-dialog" aria-labelledby="renameModalTitle">
+        <div class="modal-window">
+          <div class="modal-header">
+            <h3 class="modal-title" id="renameModalTitle">Rename board</h3>
+            <button class="modal-close-btn" id="btnRenameClose" aria-label="Close modal"><span class="ui-icon ui-icon-cross-small" aria-hidden="true"></span></button>
+          </div>
+          <div class="modal-content">
+            <label for="renameBoardInput" class="modal-label">Board name</label>
+            <input type="text" id="renameBoardInput" class="modal-input" maxlength="40" autofocus>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" id="btnRenameCancel">
+              Cancel
+            </button>
+            <button class="btn btn-primary" id="btnRenameSave">
+              Save Name
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog id="insertTableModal" class="app-dialog" aria-labelledby="insertTableTitle">
+        <form class="modal-window" method="dialog">
+          <div class="modal-header">
+            <h3 class="modal-title" id="insertTableTitle">Insert table</h3>
+          </div>
+          <div class="modal-content">
+            <div class="form-row">
+              <label class="form-group">
+                <span class="modal-label">Rows</span>
+                <input type="number" id="tableRows" class="modal-input" min="1" max="30" value="4" required autofocus>
+              </label>
+              <label class="form-group">
+                <span class="modal-label">Columns</span>
+                <input type="number" id="tableColumns" class="modal-input" min="1" max="30" value="3" required>
+              </label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="btnInsertTableCancel" class="btn btn-secondary">Cancel</button>
+            <button type="submit" class="btn btn-primary">Place table</button>
+          </div>
+        </form>
+      </dialog>
+
+      <!-- Resize Canvas Modal -->
+      <dialog id="resizeCanvasModal" class="app-dialog" aria-labelledby="resizeModalTitle">
+        <div class="modal-window">
+          <div class="modal-header">
+            <h3 class="modal-title" id="resizeModalTitle">Resize and skew</h3>
+            <button class="modal-close-btn" id="btnResizeClose" aria-label="Close modal"><span class="ui-icon ui-icon-cross-small" aria-hidden="true"></span></button>
+          </div>
+          <div class="modal-content">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="resizeWidthInput" class="modal-label">Width</label>
+                <input type="number" id="resizeWidthInput" class="modal-input" min="1" max="8000" value="1600" autofocus>
+              </div>
+              <div class="form-group">
+                <label for="resizeHeightInput" class="modal-label">Height</label>
+                <input type="number" id="resizeHeightInput" class="modal-input" min="1" max="8000" value="900">
+              </div>
+            </div>
+            <div class="form-checkbox-row">
+              <label for="resizeUnits" class="modal-label">Units</label>
+              <select id="resizeUnits" class="app-select"><option value="px">Pixels</option><option value="percent">Percent</option></select>
+            </div>
+            <div class="form-row">
+              <label class="form-group">Horizontal skew (°)<input id="skewX" type="number" min="-89" max="89" value="0" class="modal-input"></label>
+              <label class="form-group">Vertical skew (°)<input id="skewY" type="number" min="-89" max="89" value="0" class="modal-input"></label>
+            </div>
+            <div class="form-checkbox-row">
+              <label class="checkbox-label">
+                <input type="checkbox" id="resizeMaintainAspect" checked="">
+                <span>Maintain Aspect Ratio</span>
+              </label>
+            </div>
+            <div class="form-checkbox-row">
+              <label class="checkbox-label">
+                <input type="checkbox" id="resizeScaleContent">
+                <span>Scale existing drawing contents to new dimensions</span>
+              </label>
+            </div>
+            <div class="preset-sizes-row">
+              <span class="modal-label">Preset Dimensions:</span>
+              <div class="preset-badge-group">
+                <button class="preset-dim-btn" data-w="1600" data-h="900">
+                  1600×900 (HD 16:9)
+                </button>
+                <button class="preset-dim-btn" data-w="1920" data-h="1080">
+                  1920×1080 (Full HD)
+                </button>
+                <button class="preset-dim-btn" data-w="1200" data-h="800">
+                  1200×800 (Compact)
+                </button>
+                <button class="preset-dim-btn" data-w="1000" data-h="1000">
+                  1000×1000 (Square)
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" id="btnResizeCancel">
+              Cancel
+            </button>
+            <button class="btn btn-primary" id="btnResizeApply">
+              Apply Dimensions
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <!-- Keyboard Shortcuts Modal -->
+      <dialog id="shortcutsModal" class="app-dialog modal-wide" aria-labelledby="shortcutsModalTitle">
+        <div class="modal-window">
+          <div class="modal-header">
+            <h3 class="modal-title" id="shortcutsModalTitle">Keyboard shortcuts</h3>
+            <button class="modal-close-btn" id="btnShortcutsClose" aria-label="Close modal"><span class="ui-icon ui-icon-cross-small" aria-hidden="true"></span></button>
+          </div>
+          <div class="modal-content">
+            <div class="shortcuts-grid">
+              <div class="shortcuts-col">
+                <h4>Tools</h4>
+                <div class="shortcut-row">
+                  <span class="key">P</span><span>Pencil Tool</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">B</span><span>Brush Tool</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">E</span><span>Eraser Tool</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">L</span><span>Line Tool (Hold Shift for straight angles)</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">R</span><span>Rectangle Tool</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">C</span><span>Circle / Ellipse Tool</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">T</span><span>Text Tool</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">G</span><span>Fill Bucket Tool</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">I</span><span>Color Picker / Eyedropper</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">S</span><span>Select Tool (Marquee)</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">H</span><span>Hand / Pan Tool</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">V</span><span>Laser pointer (press and drag on the board)</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">X</span><span>Swap Colors (Primary / Secondary)</span>
+                </div>
+              </div>
+              <div class="shortcuts-col">
+                <h4>Commands &amp; Navigation</h4>
+                <div class="shortcut-row">
+                  <span class="key">Ctrl + Z</span><span>Undo Last Action</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">Ctrl + Y</span><span>Redo Undone Action</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">Ctrl + S</span><span>Save Project to JSON file</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">Ctrl + Shift + S</span><span>Save As Image</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">Ctrl + O</span><span>Open Image in a New Board</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">Ctrl + P</span><span>Print Artwork</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">Ctrl + C</span><span>Copy Selection</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">Ctrl + X</span><span>Cut Selection</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">Ctrl + V</span><span>Paste Selection / Clipboard image</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">Delete</span><span>Delete Selection</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">Space + Drag</span><span>Pan Canvas</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">Ctrl + Wheel</span><span>Zoom In / Out</span>
+                </div>
+                <div class="shortcut-row">
+                  <span class="key">Ctrl + 0</span><span>Reset Zoom (100%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" id="btnShortcutsDismiss">
+              Got it
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <!-- About Modal -->
+      <dialog id="aboutModal" class="app-dialog" aria-labelledby="aboutModalTitle">
+        <div class="modal-window">
+          <div class="modal-header">
+            <h3 class="modal-title" id="aboutModalTitle">About PaintBoard</h3>
+            <button class="modal-close-btn" id="btnAboutClose" aria-label="Close modal"><span class="ui-icon ui-icon-cross-small" aria-hidden="true"></span></button>
+          </div>
+          <div class="modal-content">
+            <p>PaintBoard saves your drawings in this browser. Choose Save project from the File menu to make a backup you can open on another device.</p>
+            <p>Uicons by <a href="https://www.flaticon.com/uicons">Flaticon</a></p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" id="btnAboutDismiss">Close</button>
+          </div>
+        </div>
+      </dialog>
+    </div>
+
+    <div id="printArtwork"></div>
+  
+
+</body></html>
